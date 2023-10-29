@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Login with Spotify</h1>
+  <p>Click the button below to login with your Spotify account:</p>
+  <a href="{% url 'spotify_login' %}" class="btn btn-primary">Login with Spotify</a>
+{% endblock %}

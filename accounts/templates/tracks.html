@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="my-4">My Spotify Tracks</h1>
+    <div class="list-group">
+      {% for track in tracks %}
+        <a href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ track.track.name }}</h5>
+            <small>{{ track.track.artists.0.name }}</small>
+          </div>
+          <p class="mb-1">{{ track.track.album.name }}</p>
+          <small>{{ track.added_at|date:"F d, Y" }}</small>
+        </a>
+      {% empty %}
+        <p>No tracks found.</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

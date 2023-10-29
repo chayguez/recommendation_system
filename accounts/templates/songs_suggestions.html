@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Songs Suggestion</h1>
+  <form method="post" action="">
+    {% csrf_token %}
+    <ul>
+      {% comment %} {% for songs_dict in songs_suggestion %}
+        <h3>User ID: {{ songs_dict.userid }}</h3>
+        <h4>Playlist ID: {{ songs_dict.playlist_id }}</h4>
+        {% for song_id in songs_dict.songs %}
+          {% with songs|dictlookup:song_id as song %}
+            <li>
+              {{ song_id }} - {{ song.song_name }} - {{ song.artist_name }}
+              <button class="btn btn-primary" onclick="playSong('{{ song_id }}')">Play</button>
+              <input type="hidden" name="song_id" value="{{ song_id }}">
+              <input type="hidden" name="user_id" value="{{ songs_dict.userid }}">
+              <input type="hidden" name="like_statuses" id="like_status_{{ song_id }}">
+              <button class="btn btn-success" type="button" onclick="likeSong('{{ song_id }}', 'like')">Like</button>
+              <button class="btn btn-danger" type="button" onclick="likeSong('{{ song_id }}', 'dislike')">Dislike</button>
+            </li>
+          {% endwith %}
+        {% endfor %} {% endcomment %}
+
+      {% for songs_dict in songs_suggestion %}
+            <li>
+              {{ songs_dict }}
+              <button class="btn btn-primary" type="button" onclick="playSong('{{ songs_dict }}')">Play</button>
+              <input type="hidden" name="song_id" value="{{ songs_dict }}">
+              {% comment %} <input type="hidden" name="user_id" value="{{ songs_dict.userid }}"> {% endcomment %}
+              <input type="hidden" name="like_statuses" id="like_status_{{ songs_dict }}">
+              <button class="btn btn-success" type="button" onclick="likeSong('{{ songs_dict }}', 'like')">Like</button>
+              <button class="btn btn-danger" type="button" onclick="likeSong('{{ songs_dict }}', 'dislike')">Dislike</button>
+              <button class="btn btn-danger" type="button" onclick="songDetails('{{ songs_dict }}')">Song Details</button>
+              <div id="song-details-{{ songs_dict }}"> </div>
+            </li>
+        {% comment %} {% endfor %} {% endcomment %}
+
+      {% empty %}
+        <li>No songs found.</li>
+      {% endfor %}
+    </ul>
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+{% endblock %}
+
+
+
+
+{% block script %}
+  <script>
+
+    function playSong(song_id) {
+  // Initialize the Spotify Web Playback SDK with your Spotify access token
+  const token = 'your_spotify_access_token';
+  const player = new Spotify.Player({
+    name: 'My Web Player',
+    getOAuthToken: cb => { cb(token); },
+  });
+
+  // Start playing the selected song
+  player.connect().then(success => {
+    if (success) {
+      player.play({
+        uris: [`spotify:track:${song_id}`],
+      });
+    }
+  });
+}
+  </script>
+
+  <script>
+    var songLikes = {};
+    function likeSong(songId, like) {
+        songLikes[songId] = like;
+    }
+
+    function submitLikes() {
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = "";
+
+    // Add CSRF token
+    var csrf = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    var csrfInput = document.createElement("input");
+    csrfInput.type = "hidden";
+    csrfInput.name = "csrfmiddlewaretoken";
+    csrfInput.value = csrf;
+    form.appendChild(csrfInput);
+
+    // Add song IDs and likes/dislikes
+    for (var songId in songLikes) {
+        var songInput = document.createElement("input");
+        songInput.type = "hidden";
+        songInput.name = "song_ids";
+        songInput.value = songId;
+        form.appendChild(songInput);
+
+        var likeInput = document.createElement("input");
+        likeInput.type = "hidden";
+        likeInput.name = "likes";
+        likeInput.value = songLikes[songId];
+        form.appendChild(likeInput);
+    }
+
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+}
+
+</script>
+
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}
