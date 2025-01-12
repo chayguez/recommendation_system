@@ -72,10 +72,10 @@ The application requires three terminals for operation:
 Two test accounts are available:
 1. `muz_client`  
    - Email: `chayguez@gmail.com`
-   - Password: `projectB`
+   - Password: `********`
 
 2. `muz_client_2`  
    - Email: `chayguez@campus.technion.ac.il`
-   - Password: `projectB_2`
+   - Password: `**********`
 
 ---
